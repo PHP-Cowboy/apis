@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go.uber.org/zap"
+
 	"shop-api/initialize"
 )
 
@@ -11,7 +13,11 @@ func main() {
 
 	g := initialize.InitRouter()
 
+	logger, _ := zap.NewProduction()
+	zap.ReplaceGlobals(logger)
+
+	zap.S().Info("服务启动中,端口:", *port)
 	if err := g.Run(fmt.Sprintf(":%d", *port)); err != nil {
-		panic("err:" + err.Error())
+		zap.S().Panicf("启动失败:", err.Error())
 	}
 }
