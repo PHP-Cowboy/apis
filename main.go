@@ -11,10 +11,9 @@ import (
 func main() {
 	port := flag.Int("port", 8021, "端口号")
 
-	g := initialize.InitRouter()
+	initialize.InitLogger()
 
-	logger, _ := zap.NewProduction()
-	zap.ReplaceGlobals(logger)
+	g := initialize.InitRouter()
 
 	zap.S().Info("服务启动中,端口:", *port)
 	if err := g.Run(fmt.Sprintf(":%d", *port)); err != nil {
