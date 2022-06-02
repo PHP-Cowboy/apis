@@ -8,8 +8,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
-	"shop-api/global/response"
-	"shop-api/proto/proto"
+	"shop-api/user-web/global/response"
+	proto2 "shop-api/user-web/proto/proto"
 	"time"
 
 	"google.golang.org/grpc/codes"
@@ -48,7 +48,7 @@ func GrpcErrorToHttp(err error, c *gin.Context) {
 
 var (
 	conn   *grpc.ClientConn
-	client proto.UserClient
+	client proto2.UserClient
 )
 
 func init() {
@@ -59,14 +59,14 @@ func init() {
 	if err != nil {
 		zap.S().Errorw("拨号失败")
 	}
-	client = proto.NewUserClient(conn)
+	client = proto2.NewUserClient(conn)
 }
 
 func GetUserList(ctx *gin.Context) {
 	page := uint32(1)
 	pSize := uint32(10)
 
-	rsp, err := client.GetUserList(context.Background(), &proto.PageInfo{
+	rsp, err := client.GetUserList(context.Background(), &proto2.PageInfo{
 		Pn:    page,
 		PSize: pSize,
 	})
