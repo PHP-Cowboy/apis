@@ -8,8 +8,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
+	"shop-api/user-web/forms"
 	"shop-api/user-web/global/response"
-	proto2 "shop-api/user-web/proto/proto"
+	"shop-api/user-web/proto/proto"
 	"time"
 
 	"google.golang.org/grpc/codes"
@@ -48,7 +49,7 @@ func GrpcErrorToHttp(err error, c *gin.Context) {
 
 var (
 	conn   *grpc.ClientConn
-	client proto2.UserClient
+	client proto.UserClient
 )
 
 func init() {
@@ -59,14 +60,14 @@ func init() {
 	if err != nil {
 		zap.S().Errorw("拨号失败")
 	}
-	client = proto2.NewUserClient(conn)
+	client = proto.NewUserClient(conn)
 }
 
 func GetUserList(ctx *gin.Context) {
 	page := uint32(1)
 	pSize := uint32(10)
 
-	rsp, err := client.GetUserList(context.Background(), &proto2.PageInfo{
+	rsp, err := client.GetUserList(context.Background(), &proto.PageInfo{
 		Pn:    page,
 		PSize: pSize,
 	})
@@ -94,4 +95,15 @@ func GetUserList(ctx *gin.Context) {
 		"data":  data,
 		"msg":   "success",
 	})
+}
+
+func PasswordLogin(c *gin.Context) {
+	var passwordLoginForm forms.PasswordLoginForm
+
+	err := c.ShouldBind(&passwordLoginForm)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+	}
 }

@@ -18,6 +18,8 @@ func main() {
 
 	zap.S().Info(global.ServerConfig)
 
+	initialize.InitValidator()
+
 	g := initialize.InitRouter()
 
 	zap.S().Info("服务启动中,端口:", *port)
