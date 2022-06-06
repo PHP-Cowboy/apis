@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
 	"shop-api/user-web/forms"
 	"shop-api/user-web/global/response"
+	"shop-api/user-web/middlewares"
+	"shop-api/user-web/models"
 	"shop-api/user-web/proto/proto"
 	"time"
 
@@ -106,4 +109,48 @@ func PasswordLogin(c *gin.Context) {
 			"msg": err.Error(),
 		})
 	}
+
+	userInfo, err := client.GetUserByMobile(context.Background(), &proto.MobileRequest{Mobile: passwordLoginForm.Mobile})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+	}
+
+	check, err := client.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
+		PassWord:          passwordLoginForm.Password,
+		EncryptedPassWord: userInfo.PassWord,
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+	}
+
+	if !check.Status {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "密码错误",
+		})
+	}
+
+	claims := models.CustomClaims{
+		ID:             userInfo.Id,
+		NickName:       userInfo.NickName,
+		AuthorityId:    userInfo.Role,
+		StandardClaims: jwt.StandardClaims{},
+	}
+
+	j := middlewares.NewJwt()
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token":  token,
+		"userId": userInfo.Id,
+	})
+	return
 }

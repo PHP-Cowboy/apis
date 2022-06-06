@@ -10,5 +10,6 @@ func UserRoute(g *gin.RouterGroup) {
 	{
 		userGroup.GET("/list", api.GetUserList)
 		userGroup.POST("/pwd_login", api.PasswordLogin)
+		userGroup.GET("/jwt")
 	}
 }
