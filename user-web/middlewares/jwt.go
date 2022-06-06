@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"net/http"
+	"shop-api/user-web/global"
 	"shop-api/user-web/models"
 	"time"
 )
@@ -56,7 +57,7 @@ var (
 )
 
 func NewJwt() *Jwt {
-	return &Jwt{Key: []byte("asegsfdshsdrfhsdrfhd")}
+	return &Jwt{Key: []byte(global.ServerConfig.JwtInfo.SigningKey)}
 }
 
 //创建token
