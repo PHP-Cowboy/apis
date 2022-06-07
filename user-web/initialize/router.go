@@ -15,5 +15,7 @@ func InitRouter() *gin.Engine {
 
 	router.UserRoute(group)
 
+	router.BaseRoute(group)
+
 	return r
 }

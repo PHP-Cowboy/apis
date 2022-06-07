@@ -101,16 +101,23 @@ func GetUserList(ctx *gin.Context) {
 }
 
 func PasswordLogin(c *gin.Context) {
-	var passwordLoginForm forms.PasswordLoginForm
+	var form forms.PasswordLoginForm
 
-	err := c.ShouldBind(&passwordLoginForm)
+	err := c.ShouldBind(&form)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
 	}
 
-	userInfo, err := client.GetUserByMobile(context.Background(), &proto.MobileRequest{Mobile: passwordLoginForm.Mobile})
+	if !store.Verify(form.CaptchaId, form.Captcha, true) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "验证码错误",
+		})
+		return
+	}
+
+	userInfo, err := client.GetUserByMobile(context.Background(), &proto.MobileRequest{Mobile: form.Mobile})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
@@ -118,7 +125,7 @@ func PasswordLogin(c *gin.Context) {
 	}
 
 	check, err := client.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
-		PassWord:          passwordLoginForm.Password,
+		PassWord:          form.Password,
 		EncryptedPassWord: userInfo.PassWord,
 	})
 	if err != nil {
