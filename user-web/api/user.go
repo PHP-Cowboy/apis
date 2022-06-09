@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
 	"shop-api/user-web/forms"
+	"shop-api/user-web/global"
 	"shop-api/user-web/global/response"
 	"shop-api/user-web/middlewares"
 	"shop-api/user-web/models"
@@ -160,4 +162,119 @@ func PasswordLogin(c *gin.Context) {
 		"userId": userInfo.Id,
 	})
 	return
+}
+
+func Register(c *gin.Context) {
+	//用户注册
+	registerForm := forms.RegisterForm{}
+	if err := c.ShouldBind(&registerForm); err != nil {
+		GrpcErrorToHttp(err, c)
+		return
+	}
+
+	//验证码
+	rdb := redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RedisInfo.Port),
+	})
+	value, err := rdb.Get(context.Background(), registerForm.Mobile).Result()
+	if err == redis.Nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": "验证码错误",
+		})
+		return
+	} else {
+		if value != registerForm.Code {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code": "验证码错误",
+			})
+			return
+		}
+	}
+
+	user, err := client.CreateUser(context.Background(), &proto.CreateUserInfo{
+		NickName: registerForm.Mobile,
+		PassWord: registerForm.PassWord,
+		Mobile:   registerForm.Mobile,
+	})
+
+	if err != nil {
+		zap.S().Errorf("[Register] 查询 【新建用户失败】失败: %s", err.Error())
+		GrpcErrorToHttp(err, c)
+		return
+	}
+
+	j := middlewares.NewJwt()
+	claims := models.CustomClaims{
+		ID:          user.Id,
+		NickName:    user.NickName,
+		AuthorityId: user.Role,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),               //签名的生效时间
+			ExpiresAt: time.Now().Unix() + 60*60*24*30, //30天过期
+			Issuer:    "imooc",
+		},
+	}
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": "生成token失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":         user.Id,
+		"nick_name":  user.NickName,
+		"token":      token,
+		"expired_at": (time.Now().Unix() + 60*60*24*30) * 1000,
+	})
+}
+
+func GetUserDetail(ctx *gin.Context) {
+	claims, _ := ctx.Get("claims")
+	currentUser := claims.(*models.CustomClaims)
+	zap.S().Infof("访问用户: %d", currentUser.ID)
+
+	rsp, err := client.GetUserById(context.Background(), &proto.IdRequest{
+		Id: currentUser.ID,
+	})
+	if err != nil {
+		GrpcErrorToHttp(err, ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"name":     rsp.NickName,
+		"birthday": time.Unix(int64(rsp.BirthDay), 0).Format("2006-01-02"),
+		"gender":   rsp.Gender,
+		"mobile":   rsp.Mobile,
+	})
+}
+
+func UpdateUser(ctx *gin.Context) {
+	updateUserForm := forms.UpdateUserForm{}
+	if err := ctx.ShouldBind(&updateUserForm); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	claims, _ := ctx.Get("claims")
+	currentUser := claims.(*models.CustomClaims)
+	zap.S().Infof("访问用户: %d", currentUser.ID)
+
+	//将前端传递过来的日期格式转换成int
+	loc, _ := time.LoadLocation("Local") //local的L必须大写
+	birthDay, _ := time.ParseInLocation("2006-01-02", updateUserForm.Birthday, loc)
+	_, err := client.UpdateUser(context.Background(), &proto.UpdateUserInfo{
+		Id:       (currentUser.ID),
+		NickName: updateUserForm.Name,
+		Gender:   updateUserForm.Gender,
+		BirthDay: uint32(birthDay.Unix()),
+	})
+	if err != nil {
+		GrpcErrorToHttp(err, ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{})
 }
