@@ -16,6 +16,8 @@ func main() {
 
 	initialize.InitConfig()
 
+	initialize.InitSrvConn()
+
 	zap.S().Info(global.ServerConfig)
 
 	initialize.InitValidator()

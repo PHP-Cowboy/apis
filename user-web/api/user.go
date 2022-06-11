@@ -7,8 +7,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
 	"shop-api/user-web/forms"
 	"shop-api/user-web/global"
@@ -52,27 +50,11 @@ func GrpcErrorToHttp(err error, c *gin.Context) {
 	}
 }
 
-var (
-	conn   *grpc.ClientConn
-	client proto.UserClient
-)
-
-func init() {
-	ip := "127.0.0.1"
-	port := 50051
-	var err error
-	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		zap.S().Errorw("拨号失败")
-	}
-	client = proto.NewUserClient(conn)
-}
-
 func GetUserList(ctx *gin.Context) {
 	page := uint32(1)
 	pSize := uint32(10)
 
-	rsp, err := client.GetUserList(context.Background(), &proto.PageInfo{
+	rsp, err := global.UserClient.GetUserList(context.Background(), &proto.PageInfo{
 		Pn:    page,
 		PSize: pSize,
 	})
@@ -119,14 +101,14 @@ func PasswordLogin(c *gin.Context) {
 		return
 	}
 
-	userInfo, err := client.GetUserByMobile(context.Background(), &proto.MobileRequest{Mobile: form.Mobile})
+	userInfo, err := global.UserClient.GetUserByMobile(context.Background(), &proto.MobileRequest{Mobile: form.Mobile})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
 	}
 
-	check, err := client.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
+	check, err := global.UserClient.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
 		PassWord:          form.Password,
 		EncryptedPassWord: userInfo.PassWord,
 	})
@@ -191,7 +173,7 @@ func Register(c *gin.Context) {
 		}
 	}
 
-	user, err := client.CreateUser(context.Background(), &proto.CreateUserInfo{
+	user, err := global.UserClient.CreateUser(context.Background(), &proto.CreateUserInfo{
 		NickName: registerForm.Mobile,
 		PassWord: registerForm.PassWord,
 		Mobile:   registerForm.Mobile,
@@ -235,7 +217,7 @@ func GetUserDetail(ctx *gin.Context) {
 	currentUser := claims.(*models.CustomClaims)
 	zap.S().Infof("访问用户: %d", currentUser.ID)
 
-	rsp, err := client.GetUserById(context.Background(), &proto.IdRequest{
+	rsp, err := global.UserClient.GetUserById(context.Background(), &proto.IdRequest{
 		Id: currentUser.ID,
 	})
 	if err != nil {
@@ -266,7 +248,7 @@ func UpdateUser(ctx *gin.Context) {
 	//将前端传递过来的日期格式转换成int
 	loc, _ := time.LoadLocation("Local") //local的L必须大写
 	birthDay, _ := time.ParseInLocation("2006-01-02", updateUserForm.Birthday, loc)
-	_, err := client.UpdateUser(context.Background(), &proto.UpdateUserInfo{
+	_, err := global.UserClient.UpdateUser(context.Background(), &proto.UpdateUserInfo{
 		Id:       (currentUser.ID),
 		NickName: updateUserForm.Name,
 		Gender:   updateUserForm.Gender,
