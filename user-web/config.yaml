@@ -1,0 +1,14 @@
+name: 'user-web'
+port: 8021
+
+userSrv:
+  host: '127.0.0.1'
+  port: 50051
+  name: 'user-srv'
+
+jwt:
+  key: '3WEraPIv!myZlYR&vQzoCMx5RtX3uhgL'
+
+consul:
+  host: '192.168.0.101'
+  port: 8500
