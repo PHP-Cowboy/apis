@@ -26,7 +26,7 @@ func InitSrvConn() {
 	if err != nil {
 		return
 	}
-
+	zap.S().Info(data)
 	userSrvHost := ""
 	userSrvPort := 0
 	if err != nil {

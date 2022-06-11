@@ -7,5 +7,6 @@ import (
 
 var (
 	ServerConfig = &config.ServerConfig{}
+	NacosConfig  = &config.NacosConfig{}
 	UserClient   proto.UserClient
 )
