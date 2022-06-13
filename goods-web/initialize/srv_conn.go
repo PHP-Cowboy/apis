@@ -6,8 +6,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"shop-api/user-web/global"
-	"shop-api/user-web/proto/proto"
+	"shop-api/goods-web/global"
+	"shop-api/goods-web/proto/proto"
 )
 
 func InitSrvConn() {
@@ -22,24 +22,24 @@ func InitSrvConn() {
 		panic(err)
 	}
 
-	data, err := client.Agent().ServicesWithFilter(`Service == "user-srv"`)
+	data, err := client.Agent().ServicesWithFilter(`Service == "goods-srv"`)
 	if err != nil {
 		return
 	}
 
-	userSrvHost := ""
-	userSrvPort := 0
+	goodsSrvHost := ""
+	goodsSrvPort := 0
 	if err != nil {
 		panic(err)
 	}
 	for _, value := range data {
-		userSrvHost = value.Address
-		userSrvPort = value.Port
+		goodsSrvHost = value.Address
+		goodsSrvPort = value.Port
 	}
 
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", userSrvHost, userSrvPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", goodsSrvHost, goodsSrvPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		zap.S().Errorw("拨号失败")
 	}
-	global.UserClient = proto.NewUserClient(conn)
+	global.GoodsClient = proto.NewGoodsClient(conn)
 }
