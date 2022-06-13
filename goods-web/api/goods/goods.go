@@ -38,5 +38,8 @@ func GrpcErrorToHttp(err error, c *gin.Context) {
 }
 
 func GetList(c *gin.Context) {
-
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"success": true,
+	})
 }
