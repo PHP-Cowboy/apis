@@ -92,6 +92,7 @@ func PasswordLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
+		return
 	}
 
 	if !store.Verify(form.CaptchaId, form.Captcha, true) {
@@ -106,6 +107,7 @@ func PasswordLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
+		return
 	}
 
 	check, err := global.UserClient.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
@@ -116,12 +118,14 @@ func PasswordLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
+		return
 	}
 
 	if !check.Status {
 		c.JSON(http.StatusOK, gin.H{
 			"msg": "密码错误",
 		})
+		return
 	}
 
 	claims := models.CustomClaims{
@@ -137,13 +141,13 @@ func PasswordLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": err.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"token":  token,
 		"userId": userInfo.Id,
 	})
-	return
 }
 
 func Register(c *gin.Context) {

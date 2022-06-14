@@ -3,7 +3,6 @@ package consul
 import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
-	"shop-api/goods-web/global"
 )
 
 type Registry struct {
@@ -57,7 +56,7 @@ func (r *Registry) Register(address string, port int, name string, tags []string
 
 func (r *Registry) ServiceDeregister(serviceId string) error {
 	cfg := api.DefaultConfig()
-	cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
+	cfg.Address = fmt.Sprintf("%s:%d", r.Host, r.Port)
 
 	client, err := api.NewClient(cfg)
 	if err != nil {

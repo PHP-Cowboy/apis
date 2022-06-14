@@ -21,7 +21,10 @@ func InitRouter() *gin.Engine {
 
 	group := r.Group("/g/v1")
 
-	router.GoodsRoute(group)
+	router.GoodsRoute(group)     //商品
+	router.BannerRoute(group)    //banner
+	router.BrandRouter(group)    //品牌
+	router.CategoryRouter(group) //分类
 
 	return r
 }

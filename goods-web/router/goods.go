@@ -7,8 +7,15 @@ import (
 )
 
 func GoodsRoute(g *gin.RouterGroup) {
-	userGroup := g.Group("/goods")
+	goodsGroup := g.Group("/goods")
 	{
-		userGroup.GET("/list", middlewares.JWTAuth(), middlewares.IsAdminAuth(), goods.GetList)
+		goodsGroup.GET("/list", goods.GetList)
+		goodsGroup.POST("/new", middlewares.JWTAuth(), middlewares.IsAdminAuth(), goods.New)      //改接口需要管理员权限
+		goodsGroup.GET("/:id", goods.Detail)                                                      //获取商品的详情
+		goodsGroup.DELETE("/:id", middlewares.JWTAuth(), middlewares.IsAdminAuth(), goods.Delete) //删除商品
+		goodsGroup.GET("/stocks/:id", goods.Stocks)                                               //获取商品的库存
+
+		goodsGroup.PUT("/:id", middlewares.JWTAuth(), middlewares.IsAdminAuth(), goods.Update)
+		goodsGroup.PATCH("/:id", middlewares.JWTAuth(), middlewares.IsAdminAuth(), goods.UpdateStatus)
 	}
 }
