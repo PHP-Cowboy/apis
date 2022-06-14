@@ -19,7 +19,7 @@ func InitRouter() *gin.Engine {
 
 	r.Use(middlewares.Cors())
 
-	group := r.Group("/v1")
+	group := r.Group("/u/v1")
 
 	router.UserRoute(group)
 

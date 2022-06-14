@@ -29,8 +29,6 @@ func InitConfig() {
 		zap.S().Panicf("解析配置文件到结构体出错:", err.Error())
 	}
 
-	zap.S().Infof("nacos配置信息:&v", global.NacosConfig)
-
 	//从nacos中读取配置信息
 	sc := []constant.ServerConfig{
 		{
