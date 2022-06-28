@@ -2,8 +2,6 @@ package initialize
 
 import (
 	"encoding/json"
-	"fmt"
-
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
@@ -69,5 +67,4 @@ func InitConfig() {
 	if err != nil {
 		zap.S().Fatalf("读取nacos配置失败： %s", err.Error())
 	}
-	fmt.Println(&global.ServerConfig)
 }

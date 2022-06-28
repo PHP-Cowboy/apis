@@ -2,7 +2,8 @@ package initialize
 
 import (
 	"fmt"
-	"github.com/hashicorp/consul/api"
+
+	_ "github.com/mbobakov/grpc-consul-resolver" // It's important
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -13,33 +14,13 @@ import (
 func InitSrvConn() {
 	consulInfo := global.ServerConfig.ConsulInfo
 
-	cfg := api.DefaultConfig()
-	cfg.Address = fmt.Sprintf("%s:%d", consulInfo.Host, consulInfo.Port)
-
-	client, err := api.NewClient(cfg)
-
+	conn, err := grpc.Dial(
+		fmt.Sprintf("consul://%s:%d/%s?wait=14s", consulInfo.Host, consulInfo.Port, global.ServerConfig.UserSrvInfo.Name),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
+	)
 	if err != nil {
-		panic(err)
-	}
-
-	data, err := client.Agent().ServicesWithFilter(`Service == "user-srv"`)
-	if err != nil {
-		return
-	}
-
-	userSrvHost := ""
-	userSrvPort := 0
-	if err != nil {
-		panic(err)
-	}
-	for _, value := range data {
-		userSrvHost = value.Address
-		userSrvPort = value.Port
-	}
-
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", userSrvHost, userSrvPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		zap.S().Errorw("拨号失败")
+		zap.S().Fatal("[InitSrvConn] 连接 【用户服务失败】")
 	}
 	global.UserClient = proto.NewUserClient(conn)
 }
