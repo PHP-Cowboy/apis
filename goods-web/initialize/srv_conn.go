@@ -20,7 +20,7 @@ func InitSrvConn() {
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
 	)
 	if err != nil {
-		zap.S().Errorw("拨号失败")
+		zap.S().Fatalf("[InitSrvConn] 连接 【商品服务失败】")
 	}
 	global.GoodsClient = proto.NewGoodsClient(conn)
 }
