@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"apis/goods-web/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"shop-api/goods-web/models"
 )
 
 func IsAdminAuth() gin.HandlerFunc {

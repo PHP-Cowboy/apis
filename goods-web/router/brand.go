@@ -1,8 +1,8 @@
 package router
 
 import (
+	"apis/goods-web/api/brands"
 	"github.com/gin-gonic/gin"
-	"shop-api/goods-web/api/brands"
 )
 
 func BrandRouter(Router *gin.RouterGroup) {

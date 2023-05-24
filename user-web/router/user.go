@@ -1,9 +1,9 @@
 package router
 
 import (
+	"apis/user-web/api"
+	"apis/user-web/middlewares"
 	"github.com/gin-gonic/gin"
-	"shop-api/user-web/api"
-	"shop-api/user-web/middlewares"
 )
 
 func UserRoute(g *gin.RouterGroup) {

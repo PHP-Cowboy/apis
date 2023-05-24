@@ -6,12 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/satori/go.uuid"
 	"go.uber.org/zap"
 
-	"shop-api/goods-web/global"
-	"shop-api/goods-web/initialize"
-	"shop-api/goods-web/utils/register/consul"
+	"apis/goods-web/global"
+	"apis/goods-web/initialize"
+	"apis/goods-web/utils/register/consul"
 )
 
 func main() {

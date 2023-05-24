@@ -1,8 +1,8 @@
 package router
 
 import (
+	"apis/user-web/api"
 	"github.com/gin-gonic/gin"
-	"shop-api/user-web/api"
 )
 
 func BaseRoute(g *gin.RouterGroup) {

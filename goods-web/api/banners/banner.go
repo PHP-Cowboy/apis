@@ -1,14 +1,14 @@
 package banners
 
 import (
+	"apis/goods-web/api"
+	"apis/goods-web/forms"
+	"apis/goods-web/global"
+	"apis/goods-web/proto/proto"
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/ptypes/empty"
 	"net/http"
-	"shop-api/goods-web/api"
-	"shop-api/goods-web/forms"
-	"shop-api/goods-web/global"
-	"shop-api/goods-web/proto/proto"
 	"strconv"
 )
 

@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"shop-api/goods-web/global"
+	"apis/goods-web/global"
 )
 
 func InitConfig() {

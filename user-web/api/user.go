@@ -1,19 +1,18 @@
 package api
 
 import (
+	"apis/user-web/forms"
+	"apis/user-web/global"
+	"apis/user-web/global/response"
+	"apis/user-web/middlewares"
+	"apis/user-web/models"
+	"apis/user-web/proto/proto"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
 	"net/http"
-	"shop-api/user-web/forms"
-	"shop-api/user-web/global"
-	"shop-api/user-web/global/response"
-	"shop-api/user-web/middlewares"
-	"shop-api/user-web/models"
-	"shop-api/user-web/proto/proto"
 	"time"
 
 	"google.golang.org/grpc/codes"

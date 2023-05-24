@@ -1,8 +1,8 @@
 package global
 
 import (
-	"shop-api/user-web/config"
-	"shop-api/user-web/proto/proto"
+	"apis/user-web/config"
+	"apis/user-web/proto/proto"
 )
 
 var (

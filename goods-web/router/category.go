@@ -1,8 +1,8 @@
 package router
 
 import (
+	"apis/goods-web/api/category"
 	"github.com/gin-gonic/gin"
-	"shop-api/goods-web/api/category"
 )
 
 func CategoryRouter(Router *gin.RouterGroup) {

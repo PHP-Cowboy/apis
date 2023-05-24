@@ -3,12 +3,12 @@ package initialize
 import (
 	"fmt"
 
+	"apis/goods-web/global"
+	"apis/goods-web/proto/proto"
 	_ "github.com/mbobakov/grpc-consul-resolver" // It's important
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"shop-api/goods-web/global"
-	"shop-api/goods-web/proto/proto"
 )
 
 func InitSrvConn() {

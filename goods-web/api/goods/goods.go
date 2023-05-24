@@ -1,15 +1,15 @@
 package goods
 
 import (
+	"apis/goods-web/api"
+	"apis/goods-web/forms"
+	"apis/goods-web/global"
 	"context"
 	"net/http"
-	"shop-api/goods-web/api"
-	"shop-api/goods-web/forms"
-	"shop-api/goods-web/global"
 
+	"apis/goods-web/proto/proto"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"shop-api/goods-web/proto/proto"
 	"strconv"
 )
 

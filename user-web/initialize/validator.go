@@ -1,10 +1,9 @@
 package initialize
 
 import (
+	myValidator "apis/user-web/validator"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
-	myValidator "shop-api/user-web/validator"
 )
 
 func InitValidator() {

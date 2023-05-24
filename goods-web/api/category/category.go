@@ -10,10 +10,10 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
 
-	"shop-api/goods-web/api"
-	"shop-api/goods-web/forms"
-	"shop-api/goods-web/global"
-	"shop-api/goods-web/proto/proto"
+	"apis/goods-web/api"
+	"apis/goods-web/forms"
+	"apis/goods-web/global"
+	"apis/goods-web/proto/proto"
 )
 
 func List(ctx *gin.Context) {

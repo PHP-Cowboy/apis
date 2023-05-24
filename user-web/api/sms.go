@@ -1,19 +1,18 @@
 package api
 
 import (
+	"apis/user-web/forms"
+	"apis/user-web/global"
 	"context"
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
-	"shop-api/user-web/forms"
-	"shop-api/user-web/global"
 	"strings"
 	"time"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
-	"github.com/go-redis/redis/v8"
 )
 
 func GenerateSmsCode(width int) string {

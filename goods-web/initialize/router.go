@@ -1,10 +1,10 @@
 package initialize
 
 import (
+	"apis/goods-web/middlewares"
+	"apis/goods-web/router"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"shop-api/goods-web/middlewares"
-	"shop-api/goods-web/router"
 )
 
 func InitRouter() *gin.Engine {

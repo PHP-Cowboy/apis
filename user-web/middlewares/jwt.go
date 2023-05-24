@@ -1,12 +1,12 @@
 package middlewares
 
 import (
+	"apis/user-web/global"
+	"apis/user-web/models"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"net/http"
-	"shop-api/user-web/global"
-	"shop-api/user-web/models"
 	"time"
 )
 
@@ -60,13 +60,13 @@ func NewJwt() *Jwt {
 	return &Jwt{Key: []byte(global.ServerConfig.JwtInfo.SigningKey)}
 }
 
-//创建token
+// 创建token
 func (j *Jwt) CreateToken(claims models.CustomClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.Key)
 }
 
-//解析token
+// 解析token
 func (j *Jwt) ParseToken(tokenString string) (*models.CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &models.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return j.Key, nil
@@ -97,7 +97,7 @@ func (j *Jwt) ParseToken(tokenString string) (*models.CustomClaims, error) {
 	}
 }
 
-//更新token
+// 更新token
 func (j *Jwt) RefreshToken(tokenString string) (string, error) {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)

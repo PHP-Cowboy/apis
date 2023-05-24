@@ -1,14 +1,13 @@
 package main
 
 import (
+	"apis/user-web/global"
+	"apis/user-web/initialize"
+	"apis/user-web/utils/register/consul"
 	"fmt"
-	"github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
-	"shop-api/user-web/global"
-	"shop-api/user-web/initialize"
-	"shop-api/user-web/utils/register/consul"
 	"syscall"
 )
 
